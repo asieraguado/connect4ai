@@ -5,19 +5,21 @@ class Game:
     board = connect4.Board()
     game_ended = False
 
-    def __init__(self, ai_players):
+    def __init__(self, ai_players, input_function, output_function):
         self.ai_players = ai_players
+        self.input_function = input_function
+        self.output_function = output_function
 
     def ai_play(self, player):
         move = self.ai.best_move(self.board, player)
         self.board.play(player, move)
-        print("AI player ({}) played {}".format(player, move))
+        self.output_function("AI player ({}) played {}".format(player, move))
         self.board.print()
     
     def human_play(self, player):
-        move = int(input("Your move: [0-6] "))
+        move = int(self.input_function("Your move: [0-6] "))
         self.board.play(player, move)
-        print("You ({}) played {}".format(player, move))
+        self.output_function("You ({}) played {}".format(player, move))
         self.board.print()
 
     def play(self, player):
@@ -30,13 +32,13 @@ class Game:
         player1_score = self.ai.player_score(self.board, 1)
         player2_score = self.ai.player_score(self.board, 2)
         if player1_score >= 3**self.ai.EXP_LINE_WEIGHT:
-            print("Player 1 wins!")
+            self.output_function("Player 1 wins!")
             self.game_ended = True
         elif player2_score >= 3**self.ai.EXP_LINE_WEIGHT:
-            print("Player 2 wins!")
+            self.output_function("Player 2 wins!")
             self.game_ended = True
         elif self.board.is_full():
-            print("Draw!")
+            self.output_function("Draw!")
             self.game_ended = True
     
     def start(self):
@@ -50,5 +52,5 @@ class Game:
             if self.game_ended:
                 break
 
-game = Game(ai_players={2})
+game = Game(ai_players={2}, input_function=input, output_function=print)
 game.start()
